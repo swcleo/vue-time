@@ -1,4 +1,4 @@
-const Time = require('./time')
+const Time = require('./Time')
 
 let Vue
 
