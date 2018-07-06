@@ -21,8 +21,19 @@ Time.prototype.format = function (...args) {
   return dateformat.apply(null, [this._date, ...args])
 }
 
-Time.prototype.update = function (updateTime) {
-  // TODO: 待設定更新時間方式
+Time.prototype.update = function (timestamp) {
+  if (!timestamp) {
+    return
+  }
+
+  let ts = timestamp
+
+  // 秒數長度檢查
+  if (('' + ts).length === 10) {
+      ts = ts * 1000
+  }
+
+  this._date.setTime(ts)
 }
 
 Time.prototype.on = function (evnetName, listener) {
