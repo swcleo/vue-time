@@ -26,10 +26,14 @@ class Time {
       ts = ts * 1000
     }
 
-    this._moment = moment.unix(ts)
+    this._moment = moment(ts)
   }
 
   getTime() {
+    return +this._moment
+  }
+
+  getUnixTime() {
     return this._moment.unix()
   }
 
