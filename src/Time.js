@@ -1,47 +1,55 @@
 const EventEmitter = require('events')
 const dateformat = require('dateformat')
+const moment = require('moment')
+require('moment-timezone')
 
-function Time() {
-  this._date = new Date()
-  this._timer = setInterval(this.tick.bind(this), 1000)
-  this._events = new EventEmitter()
-}
+class Time {
+  constructor() {
+    this._moment = moment()
 
-Time.prototype.tick = function () {
-  const next = this._date.getTime() + 1000
-  this._date.setTime(next)
-  this._events.emit('tick', this.getTime())
-}
+    this._events = new EventEmitter()
 
-Time.prototype.getTime = function () {
-  return Math.floor(this._date.getTime() / 1000)
-}
-
-Time.prototype.format = function (...args) {
-  return dateformat.apply(null, [this._date, ...args])
-}
-
-Time.prototype.update = function (timestamp) {
-  if (!timestamp) {
-    return
+    this._timer = setInterval(() => {
+      this._moment = this._moment.add(1, 'seconds')
+      this._events.emit('tick', this.getTime())
+    }, 1000)
   }
 
-  let ts = timestamp
+  update(timestamp) {
+    if (!timestamp) {
+      return
+    }
 
-  // 秒數長度檢查
-  if (('' + ts).length === 10) {
+    let ts = timestamp
+
+    // 秒數長度檢查
+    if (('' + ts).length === 10) {
       ts = ts * 1000
+    }
+
+    this._moment = moment.unix(ts)
   }
 
-  this._date.setTime(ts)
-}
+  getTime() {
+    return this._moment.unix()
+  }
 
-Time.prototype.on = function (evnetName, listener) {
-  this._events.on(evnetName, listener)
-}
+  tz(timezone) {
+    this._moment = this._moment.tz(timezone)
+    return this
+  }
 
-Time.prototype.off = function (evnetName, listener) {
-  this._events.removeListener(evnetName, listener)
+  format(...args) {
+    return this._moment.format.apply(this._moment, args)
+  }
+
+  on(evnetName, listener) {
+    this._events.on(evnetName, listener)
+  }
+
+  off(evnetName, listener) {
+    this._events.removeListener(evnetName, listener)
+  }
 }
 
 module.exports = Time
