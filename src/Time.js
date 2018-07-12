@@ -1,5 +1,4 @@
 const EventEmitter = require('events')
-const dateformat = require('dateformat')
 const moment = require('moment')
 require('moment-timezone')
 
