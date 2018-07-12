@@ -26,7 +26,7 @@ class Time {
       ts = ts * 1000
     }
 
-    this._moment = moment(ts)
+    this._moment = moment(+ts)
   }
 
   getTime() {
