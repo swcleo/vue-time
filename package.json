@@ -8,11 +8,15 @@
     "moment-timezone": "^0.5.21"
   },
   "devDependencies": {
-    "cz-conventional-changelog": "^2.1.0"
+    "cz-conventional-changelog": "^2.1.0",
+    "jest": "^23.5.0"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "scripts": {
+    "test": "jest"
   }
 }

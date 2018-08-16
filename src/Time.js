@@ -37,8 +37,9 @@ class Time {
     return this._moment.unix()
   }
 
-  tz(timezone) {
-    this._moment = this._moment.tz(timezone)
+  tz(timeZone) {
+    this.timeZone = timeZone
+    this._moment = this._moment.tz(timeZone)
     return this
   }
 
@@ -52,6 +53,28 @@ class Time {
 
   off(evnetName, listener) {
     this._events.removeListener(evnetName, listener)
+  }
+
+  transformTimestampToStr(timestamp, formatOfStr) {
+    let m =  moment.unix(timestamp)
+
+    if (this.timeZone) {
+      m = m.tz(this.timeZone)
+    }
+
+    return formatOfStr ? m.format(formatOfStr) : m.format()
+  }
+
+  transformStrToTimestamp(str, formatOfStr, isUTC) {
+    let m
+
+    if (this.timeZone) {
+      m = moment.tz(str, formatOfStr, this.timeZone)
+    } else {
+      m = moment(str, formatOfStr)
+    }
+
+    return m.unix()
   }
 }
 
