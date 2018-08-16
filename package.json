@@ -1,6 +1,6 @@
 {
   "name": "vue-time",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "main": "src/index.js",
   "dependencies": {
     "events": "^3.0.0",
