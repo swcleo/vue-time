@@ -27,6 +27,8 @@ class Time {
     }
 
     this._moment = moment(+ts)
+
+    return this
   }
 
   getTime() {
