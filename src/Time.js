@@ -28,6 +28,10 @@ class Time {
 
     this._moment = moment(+ts)
 
+    if (this.timeZone) {
+      this._moment = this._moment.tz(this.timeZone)
+    }
+
     return this
   }
 
