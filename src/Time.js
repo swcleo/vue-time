@@ -32,6 +32,8 @@ class Time {
       this._moment = this._moment.tz(this.timeZone)
     }
 
+    this._events.emit('update', this.getTime())
+
     return this
   }
 
