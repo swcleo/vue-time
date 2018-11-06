@@ -51,6 +51,13 @@ class Time {
     return this
   }
 
+  utcOffset(offset) {
+    if (offset) {
+      this._moment.utcOffset(offset)
+    }
+    return  this._moment.utcOffset()
+  }
+
   format(...args) {
     return this._moment.format.apply(this._moment, args)
   }
