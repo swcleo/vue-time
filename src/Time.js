@@ -26,7 +26,11 @@ class Time {
       ts = ts * 1000
     }
 
-    this._moment = moment(+ts)
+    if (this.offset) {
+      this._moment = moment(+ts).utcOffset(this.offset)
+    } else {
+      this._moment = moment(+ts)
+    }
 
     if (this.timeZone) {
       this._moment = this._moment.tz(this.timeZone)
@@ -53,6 +57,7 @@ class Time {
 
   utcOffset(offset) {
     if (offset) {
+      this.offset = offset
       this._moment.utcOffset(offset)
     }
     return  this._moment.utcOffset()
