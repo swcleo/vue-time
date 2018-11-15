@@ -8,6 +8,8 @@ class Time {
 
     this._events = new EventEmitter()
 
+    this.offset = this._moment.utcOffset()
+
     this._timer = setInterval(() => {
       this._moment = this._moment.add(1, 'seconds')
       this._events.emit('tick', this.getTime())
@@ -76,7 +78,7 @@ class Time {
   }
 
   transformTimestampToStr(timestamp, formatOfStr) {
-    let m =  moment.unix(timestamp)
+    let m =  moment.unix(timestamp).utcOffset(this.offset)
 
     if (this.timeZone) {
       m = m.tz(this.timeZone)
@@ -91,7 +93,7 @@ class Time {
     if (this.timeZone) {
       m = moment.tz(str, formatOfStr, this.timeZone)
     } else {
-      m = moment(str, formatOfStr)
+      m = moment(str, formatOfStr).utcOffset(this.offset)
     }
 
     return m.unix()
