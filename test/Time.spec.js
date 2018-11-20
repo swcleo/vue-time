@@ -1,20 +1,33 @@
 const Time = require('../src/Time');
 
+
+// 注意 transformTimestampToStr & transformStrToTimestamp
+// 原本走tz會受冬季節約時間影響，改用utcOffset是透過運算調整
+test('xxx', () => {
+  const t = new Time()
+  t.utcOffset(-240)
+  t.update('1542589200')
+  expect(t.format()).toBe('2018-11-18T21:00:00-04:00')
+  expect(t.transformTimestampToStr('1542589200', 'YYYY/MM/DD HH:mm:ss')).toBe('2018/11/18 21:00:00')
+  expect(t.transformStrToTimestamp('2018/11/18 21:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542589200)
+})
+
 test('transformTimestampToStr()', () => {
   const t = new Time()
   t.tz('Asia/Taipei')
   expect(t.transformTimestampToStr(1534382333)).toBe('2018-08-16T09:18:53+08:00')
   t.tz('America/New_York')
-  expect(t.transformTimestampToStr(1534382333)).toBe('2018-08-15T21:18:53-04:00')
-  expect(t.transformTimestampToStr(1534382333, 'YYYY/MM/DD HH:mm:ss')).toBe('2018/08/15 21:18:53')
+  expect(t.transformTimestampToStr(1542589200)).toBe('2018-11-18T20:00:00-05:00')
+  expect(t.transformTimestampToStr(1542589200, 'YYYY/MM/DD HH:mm:ss')).toBe('2018/11/18 20:00:00')
+  expect(t.transformStrToTimestamp('2018/11/18 20:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542589200)
 })
 
 test('transformStrToTimestamp()', () => {
   const t = new Time()
   t.utcOffset(-240)
-  expect(t.transformStrToTimestamp('2018/11/19 21:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542589200)
-  expect(t.transformStrToTimestamp('2018/11/20 00:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542600000)
-  expect(t.transformStrToTimestamp('2018/11/20', 'YYYY/MM/DD')).toBe(1542600000)
+  expect(t.transformStrToTimestamp('2018/11/19 21:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542675600)
+  expect(t.transformStrToTimestamp('2018/11/20 00:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542686400)
+  expect(t.transformStrToTimestamp('2018/11/20', 'YYYY/MM/DD')).toBe(1542686400)
 
   t.utcOffset(480)
   t.update(1542675600)

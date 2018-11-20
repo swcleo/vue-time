@@ -100,8 +100,8 @@ class Time {
 
     const x = m.unix()
     const offset = m.utcOffset()
-    const t = x + offset * 60 * -1
-    const ut =  t + 60 * this.offset
+    const t = x + offset * 60
+    const ut =  t - 60 * this.offset
 
     return ut
   }
