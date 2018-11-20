@@ -11,8 +11,17 @@ test('transformTimestampToStr()', () => {
 
 test('transformStrToTimestamp()', () => {
   const t = new Time()
-  t.tz('Asia/Taipei')
-  expect(t.transformStrToTimestamp('2018/08/16 09:18:53', 'YYYY/MM/DD HH:mm:ss')).toBe(1534382333)
+  t.utcOffset(-240)
+  t.update(1542675600)
+  expect(t.format()).toBe('2018-11-19T21:00:00-04:00')
+  expect(t.transformStrToTimestamp('2018/11/19 21:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542589200)
+  expect(t.transformStrToTimestamp('2018/11/20 00:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542600000)
+
+  t.utcOffset(480)
+  t.update(1542675600)
+  expect(t.format()).toBe('2018-11-20T09:00:00+08:00')
+  expect(t.transformStrToTimestamp('2018/11/19 09:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542589200)
+  expect(t.transformStrToTimestamp('2018/11/20 00:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542643200)
 })
 
 test('format()', () => {
@@ -53,12 +62,4 @@ test('utcOffset()', () => {
   expect(t.utcOffset()).toBe(-240)
   expect(t.getUnixTime()).toBe(1541485485)
   expect(t.format()).toBe('2018-11-06T02:24:45-04:00')
-
-  t.update(1541485605)
-
-  expect(t.utcOffset()).toBe(-240)
-  expect(t.getUnixTime()).toBe(1541485605)
-  expect(t.format()).toBe('2018-11-06T02:26:45-04:00')
-  expect(t.transformTimestampToStr(1541485485)).toBe('2018-11-06T02:24:45-04:00')
-  expect(t.transformStrToTimestamp('2018-11-06T02:24:45-04:00')).toBe(1541485485)
 })

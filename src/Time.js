@@ -62,7 +62,7 @@ class Time {
       this.offset = offset
       this._moment.utcOffset(offset)
     }
-    return  this._moment.utcOffset()
+    return this._moment.utcOffset()
   }
 
   format(...args) {
@@ -78,7 +78,7 @@ class Time {
   }
 
   transformTimestampToStr(timestamp, formatOfStr) {
-    let m =  moment.unix(timestamp).utcOffset(this.offset)
+    let m = moment.unix(timestamp).utcOffset(this.offset)
 
     if (this.timeZone) {
       m = m.tz(this.timeZone)
@@ -92,11 +92,17 @@ class Time {
 
     if (this.timeZone) {
       m = moment.tz(str, formatOfStr, this.timeZone)
-    } else {
-      m = moment(str, formatOfStr).utcOffset(this.offset)
+      return m.unix()
     }
 
-    return m.unix()
+    m = moment(str, formatOfStr)
+
+    const x = m.unix()
+    const offset = m.utcOffset()
+    const t = x + offset * 60 * -1
+    const ut =  t + 60 * this.offset
+
+    return ut
   }
 }
 
