@@ -12,16 +12,16 @@ test('transformTimestampToStr()', () => {
 test('transformStrToTimestamp()', () => {
   const t = new Time()
   t.utcOffset(-240)
-  t.update(1542675600)
-  expect(t.format()).toBe('2018-11-19T21:00:00-04:00')
   expect(t.transformStrToTimestamp('2018/11/19 21:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542589200)
   expect(t.transformStrToTimestamp('2018/11/20 00:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542600000)
+  expect(t.transformStrToTimestamp('2018/11/20', 'YYYY/MM/DD')).toBe(1542600000)
 
   t.utcOffset(480)
   t.update(1542675600)
   expect(t.format()).toBe('2018-11-20T09:00:00+08:00')
   expect(t.transformStrToTimestamp('2018/11/19 09:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542589200)
   expect(t.transformStrToTimestamp('2018/11/20 00:00:00', 'YYYY/MM/DD HH:mm:ss')).toBe(1542643200)
+  expect(t.transformStrToTimestamp('2018/11/20', 'YYYY/MM/DD')).toBe(1542643200)
 })
 
 test('format()', () => {
