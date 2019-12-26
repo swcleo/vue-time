@@ -1,18 +1,46 @@
 const EventEmitter = require('events')
-const moment = require('moment')
-require('moment-timezone')
+const DateTime = require('datetime')
+const format = require('date-format')
+
+export function getTimeOfTimezone(changeTimezone) {
+  const date = new Date()
+  const timezoneOffset = date.getTimezoneOffset()
+  const time =
+    date.getTime() + timezoneOffset * 60 * 1000 + changeTimezone * 60 * 1000
+  return time
+}
+
+function ISO8601Format(date, timezoneOffset) {
+  const time = format('yyyy-MM-ddThh:mm:ss', date)
+  const offset = timezoneOffset / 60
+  const symbol = offset >= 0 ? '+' : '-'
+  const int = Math.abs(offset)
+  const zone = int >= 0 && int < 10 ? `0${int}` : int
+
+  return `${time}${symbol}${zone}:00`
+}
+
+function checkTimestamp(timestamp) {
+  let ts = timestamp
+
+  if (`${ts}`.length === 10) {
+    ts = ts * 1000
+  }
+
+  return ts
+}
 
 class Time {
   constructor() {
-    this._moment = moment()
+    this.dateTime = new DateTime()
 
-    this._events = new EventEmitter()
+    this.events = new EventEmitter()
 
-    this.offset = this._moment.utcOffset()
+    this.offset = this.dateTime.getTimezoneOffset()
 
     this._timer = setInterval(() => {
-      this._moment = this._moment.add(1, 'seconds')
-      this._events.emit('tick', this.getTime())
+      this.dateTime.setTime(this.dateTime.getTime() + 1000)
+      this.events.emit('tick', this.dateTime.getTime())
     }, 1000)
   }
 
@@ -21,89 +49,68 @@ class Time {
       return
     }
 
-    let ts = timestamp
+    const ts = checkTimestamp(timestamp)
 
-    // 秒數長度檢查
-    if (('' + ts).length === 10) {
-      ts = ts * 1000
-    }
+    this.dateTime.setTime(ts)
 
-    if (this.offset) {
-      this._moment = moment(+ts).utcOffset(this.offset)
-    } else {
-      this._moment = moment(+ts)
-    }
-
-    if (this.timeZone) {
-      this._moment = this._moment.tz(this.timeZone)
-    }
-
-    this._events.emit('update', this.getTime())
+    this.events.emit('update', this.dateTime.getTime() / 1000)
 
     return this
   }
 
   getTime() {
-    return +this._moment
+    return this.dateTime.getTime()
   }
 
   getUnixTime() {
-    return this._moment.unix()
-  }
-
-  tz(timeZone) {
-    this.timeZone = timeZone
-    this._moment = this._moment.tz(timeZone)
-    return this
+    return Math.floor(this.dateTime.getTime() / 1000)
   }
 
   utcOffset(offset) {
-    if (offset) {
-      this._moment.utcOffset(offset)
-      this.offset = this._moment.utcOffset()
+    const timeOffset = -1 * offset
+
+    if (timeOffset || timeOffset === 0) {
+      this.dateTime.setTimezoneOffset(timeOffset)
+      this.offset = timeOffset
     }
 
-    return this.offset
+    return -1 * this.offset
   }
 
-  format(...args) {
-    return this._moment.format.apply(this._moment, args)
+  format(type) {
+    const offset = this.utcOffset()
+
+    if (type) {
+      return format(type, this.dateTime.date)
+    }
+
+    return ISO8601Format(this.dateTime.date, offset)
   }
 
   on(evnetName, listener) {
-    this._events.on(evnetName, listener)
+    this.events.on(evnetName, listener)
   }
 
   off(evnetName, listener) {
-    this._events.removeListener(evnetName, listener)
+    this.events.removeListener(evnetName, listener)
   }
 
   transformTimestampToStr(timestamp, formatOfStr) {
-    let m = moment.unix(timestamp).utcOffset(this.offset)
+    const ts = checkTimestamp(timestamp)
+    const diff = Date.now() - getTimeOfTimezone(this.utcOffset())
+    const time = new Date(ts)
+    const date = new Date(time.getTime() - diff)
 
-    if (this.timeZone) {
-      m = m.tz(this.timeZone)
-    }
-
-    return formatOfStr ? m.format(formatOfStr) : m.format()
+    return formatOfStr
+      ? format(formatOfStr, date)
+      : ISO8601Format(date, this.utcOffset())
   }
 
-  transformStrToTimestamp(str, formatOfStr, isUTC) {
-    let m
-
-    if (this.timeZone) {
-      m = moment.tz(str, formatOfStr, this.timeZone)
-      return m.unix()
-    }
-
-    m = moment(str, formatOfStr)
-
-    const x = m.unix()
-    const offset = m.utcOffset()
-    const t = x + offset * 60
-    const ut =  t - 60 * this.offset
-
-    return ut
+  transformStrToTimestamp(str, formatOfStr) {
+    const diff = Date.now() - getTimeOfTimezone(this.utcOffset())
+    const time = format.parse(formatOfStr, str)
+    const ts = time.getTime() + diff
+    return Math.floor(ts / 1000)
   }
 }
 

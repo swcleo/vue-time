@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'main.js',
+    filename: 'vue-time.js',
     library: 'VueTime',
     libraryTarget: 'umd'
   },
@@ -20,11 +20,5 @@ module.exports = {
         }
       }
     ]
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      moment: 'moment'
-    }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-  ]
+  }
 }
