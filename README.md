@@ -1,4 +1,4 @@
-# vue-time
+# vue-time [![Build Status](https://travis-ci.org/swcleo/vue-time.svg?branch=master)](https://travis-ci.org/swcleo/vue-time)
 
 Vue日期時間小工具，對應時區的概念([TIMEZONE](https://www.timeanddate.com/time/map/))，忽略日光節約時間的時差，。
 
