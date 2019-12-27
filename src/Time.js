@@ -14,20 +14,31 @@ function ISO8601Format(date, timezoneOffset) {
   const time = format('yyyy-MM-ddThh:mm:ss', date)
   const offset = timezoneOffset / 60
   const symbol = offset >= 0 ? '+' : '-'
-  const int = Math.abs(offset)
-  const zone = int >= 0 && int < 10 ? `0${int}` : int
+  const absOffset = Math.abs(offset)
+  const zone = absOffset >= 0 && absOffset < 10 ? `0${absOffset}` : absOffset
 
   return `${time}${symbol}${zone}:00`
 }
 
-function checkTimestamp(timestamp) {
-  let ts = timestamp
+function toTSMillisecond(ts) {
+  let timestamp = ts
 
-  if (`${ts}`.length === 10) {
-    ts = ts * 1000
+  if (`${timestamp}`.length === 10) {
+    timestamp = timestamp * 1000
   }
 
-  return ts
+  return timestamp
+}
+
+function stdTimezoneOffset(year) {
+  const jan = new Date(year, 0, 1)
+  const jul = new Date(year, 6, 1)
+  return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset())
+}
+
+function isDST(ts) {
+  const date = new Date(ts)
+  return date.getTimezoneOffset() < stdTimezoneOffset(date.getFullYear())
 }
 
 class Time {
@@ -49,7 +60,7 @@ class Time {
       return
     }
 
-    const ts = checkTimestamp(timestamp)
+    const ts = toTSMillisecond(timestamp)
 
     this.dateTime.setTime(ts)
 
@@ -96,10 +107,17 @@ class Time {
   }
 
   transformTimestampToStr(timestamp, formatOfStr) {
-    const ts = checkTimestamp(timestamp)
-    const diff = Date.now() - getTimeOfTimezone(this.utcOffset())
+    const ts = toTSMillisecond(timestamp)
     const time = new Date(ts)
-    const date = new Date(time.getTime() - diff)
+    const diff = Date.now() - getTimeOfTimezone(this.utcOffset())
+
+    let transformTime = time.getTime() - diff
+
+    if (isDST(ts)) {
+      transformTime = transformTime - 3600 * 1000
+    }
+
+    const date = new Date(transformTime)
 
     return formatOfStr
       ? format(formatOfStr, date)
