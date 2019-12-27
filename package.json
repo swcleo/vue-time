@@ -4,7 +4,7 @@
   "main": "dist/vue-time.js",
   "dependencies": {
     "date-format": "3.0.0",
-    "datetime": "git+https://github.com/swcleo/datetime.git",
+    "datetime": "git+https://github.com/swcleo/datetime.git#1.0.0",
     "events": "3.0.0"
   },
   "devDependencies": {
