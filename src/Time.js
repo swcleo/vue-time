@@ -1,6 +1,6 @@
-const EventEmitter = require('events')
-const DateTime = require('datetime')
-const format = require('date-format')
+import EventEmitter from 'events'
+import DateTime from 'datetime'
+import format from 'date-format'
 
 export function getTimeOfTimezone(changeTimezone) {
   const date = new Date()
@@ -41,7 +41,7 @@ function isDST(ts) {
   return date.getTimezoneOffset() < stdTimezoneOffset(date.getFullYear())
 }
 
-class Time {
+export class Time {
   constructor() {
     this.dateTime = new DateTime()
 
@@ -131,5 +131,3 @@ class Time {
     return Math.floor(ts / 1000)
   }
 }
-
-module.exports = Time

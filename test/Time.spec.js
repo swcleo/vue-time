@@ -1,4 +1,4 @@
-const Time = require('../src/Time')
+import { Time } from '../src/Time'
 
 // 注意 transformTimestampToStr & transformStrToTimestamp會受冬季節約時間影響，改用utcOffset是透過運算調整
 test('debug', () => {

@@ -1,6 +1,6 @@
-const Time = require('./Time')
-const install = require('./install')
+import { Time } from './Time'
+import { install } from './install'
 
 Time.install = install
 
-module.exports = Time
+export default Time
