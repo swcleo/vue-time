@@ -1,6 +1,6 @@
 {
   "name": "vue-time",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/vue-time.js",
   "dependencies": {
     "date-format": "3.0.0",
